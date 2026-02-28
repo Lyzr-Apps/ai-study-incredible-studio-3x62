@@ -5,12 +5,16 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { FiMessageSquare, FiFileText, FiBook, FiMenu, FiX, FiChevronRight } from 'react-icons/fi'
+import { FiMessageSquare, FiFileText, FiBook, FiMenu, FiX, FiChevronRight, FiCalendar, FiTarget, FiGrid, FiBell } from 'react-icons/fi'
 import { callAIAgent } from '@/lib/aiAgent'
 import { getDocuments, uploadAndTrainDocument, deleteDocuments } from '@/lib/ragKnowledgeBase'
 import type { RAGDocument } from '@/lib/ragKnowledgeBase'
 import ChatSection from './sections/ChatSection'
 import MyNotesSection from './sections/MyNotesSection'
+import StudyPlannerSection from './sections/StudyPlannerSection'
+import WeakTopicTestSection from './sections/WeakTopicTestSection'
+import SmartTimetableSection from './sections/SmartTimetableSection'
+import DailyReminderSection from './sections/DailyReminderSection'
 
 const AGENT_ID = '69a28f6f2d763c5cd4148906'
 const RAG_ID = '69a28f5af572c99c0ffbe8a7'
@@ -117,7 +121,7 @@ class ErrorBoundary extends React.Component<
 }
 
 export default function Page() {
-  const [activeSection, setActiveSection] = useState<'chat' | 'notes'>('chat')
+  const [activeSection, setActiveSection] = useState<'chat' | 'notes' | 'planner' | 'test' | 'timetable' | 'reminders'>('chat')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showSample, setShowSample] = useState(false)
 
@@ -262,6 +266,10 @@ export default function Page() {
   const navItems = [
     { id: 'chat' as const, label: 'Chat', icon: FiMessageSquare },
     { id: 'notes' as const, label: 'My Notes', icon: FiFileText },
+    { id: 'planner' as const, label: 'Study Planner', icon: FiCalendar },
+    { id: 'test' as const, label: 'Weak Topic Test', icon: FiTarget },
+    { id: 'timetable' as const, label: 'Smart Timetable', icon: FiGrid },
+    { id: 'reminders' as const, label: 'Reminders', icon: FiBell },
   ]
 
   return (
@@ -370,6 +378,18 @@ export default function Page() {
                 onUploadFile={handleUploadFile}
                 onDeleteFile={handleDeleteFile}
               />
+            )}
+            {activeSection === 'planner' && (
+              <StudyPlannerSection noteCount={noteCount} />
+            )}
+            {activeSection === 'test' && (
+              <WeakTopicTestSection noteCount={noteCount} />
+            )}
+            {activeSection === 'timetable' && (
+              <SmartTimetableSection noteCount={noteCount} />
+            )}
+            {activeSection === 'reminders' && (
+              <DailyReminderSection />
             )}
           </div>
         </main>
