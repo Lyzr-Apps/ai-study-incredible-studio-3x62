@@ -1,0 +1,18 @@
+{
+  "agent_name": "Study Helper Agent",
+  "agent_id": "69a28f6f2d763c5cd4148906",
+  "description": "Answers questions, solves problems, explains concepts, and provides study assistance by searching through the user's uploaded notes and documents via RAG. Capable of step-by-step problem solving, concept summarization, and exam-style Q&A.",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "answer": "string",
+    "source_references": "string",
+    "follow_up_suggestions": "string"
+  },
+  "example_response": {
+    "answer": "The main answer or explanation to the student's question",
+    "source_references": "References to specific documents or sections from the student's notes that were used",
+    "follow_up_suggestions": "2-3 suggested follow-up questions the student might want to ask"
+  }
+}

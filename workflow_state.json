@@ -1,0 +1,11 @@
+{
+  "agents": [
+    {
+      "name": "Study Helper Agent",
+      "agent_id": "69a28f6f2d763c5cd4148906",
+      "type": "single",
+      "has_knowledge_base": true,
+      "rag_id": "69a28f5af572c99c0ffbe8a7"
+    }
+  ]
+}

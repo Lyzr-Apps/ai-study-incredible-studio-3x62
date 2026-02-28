@@ -1,0 +1,14 @@
+{
+  "agent_name": "Study Helper Agent",
+  "agent_id": "69a28f6f2d763c5cd4148906",
+  "agent_type": "json",
+  "accessor": "json",
+  "has_module_outputs": false,
+  "has_knowledge_base": true,
+  "rag_id": "69a28f5af572c99c0ffbe8a7",
+  "schema": {
+    "answer": "string - The main answer or explanation",
+    "source_references": "string - References to documents/sections used",
+    "follow_up_suggestions": "string - 2-3 suggested follow-up questions"
+  }
+}
