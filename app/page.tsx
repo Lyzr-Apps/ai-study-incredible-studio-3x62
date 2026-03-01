@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { FiMessageSquare, FiFileText, FiBook, FiMenu, FiX, FiChevronRight, FiCalendar, FiTarget, FiGrid, FiBell } from 'react-icons/fi'
+import { FiMessageSquare, FiFileText, FiBook, FiMenu, FiX, FiChevronRight, FiCalendar, FiTarget, FiGrid, FiBell, FiMic } from 'react-icons/fi'
 import { callAIAgent } from '@/lib/aiAgent'
 import { getDocuments, uploadAndTrainDocument, deleteDocuments } from '@/lib/ragKnowledgeBase'
 import type { RAGDocument } from '@/lib/ragKnowledgeBase'
@@ -15,6 +15,7 @@ import StudyPlannerSection from './sections/StudyPlannerSection'
 import WeakTopicTestSection from './sections/WeakTopicTestSection'
 import SmartTimetableSection from './sections/SmartTimetableSection'
 import DailyReminderSection from './sections/DailyReminderSection'
+import VoiceAssistantSection from './sections/VoiceAssistantSection'
 
 const AGENT_ID = '69a28f6f2d763c5cd4148906'
 const RAG_ID = '69a28f5af572c99c0ffbe8a7'
@@ -121,7 +122,7 @@ class ErrorBoundary extends React.Component<
 }
 
 export default function Page() {
-  const [activeSection, setActiveSection] = useState<'chat' | 'notes' | 'planner' | 'test' | 'timetable' | 'reminders'>('chat')
+  const [activeSection, setActiveSection] = useState<'chat' | 'notes' | 'planner' | 'test' | 'timetable' | 'reminders' | 'voice'>('chat')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showSample, setShowSample] = useState(false)
 
@@ -270,6 +271,7 @@ export default function Page() {
     { id: 'test' as const, label: 'Weak Topic Test', icon: FiTarget },
     { id: 'timetable' as const, label: 'Smart Timetable', icon: FiGrid },
     { id: 'reminders' as const, label: 'Reminders', icon: FiBell },
+    { id: 'voice' as const, label: 'Voice Assistant', icon: FiMic },
   ]
 
   return (
@@ -390,6 +392,9 @@ export default function Page() {
             )}
             {activeSection === 'reminders' && (
               <DailyReminderSection />
+            )}
+            {activeSection === 'voice' && (
+              <VoiceAssistantSection noteCount={noteCount} />
             )}
           </div>
         </main>
