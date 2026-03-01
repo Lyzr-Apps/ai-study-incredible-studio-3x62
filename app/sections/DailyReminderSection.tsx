@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { FiBell, FiPlus, FiTrash2, FiCheck, FiClock, FiAlertCircle } from 'react-icons/fi'
+import { FiBell, FiPlus, FiTrash2, FiCheck, FiClock, FiInfo } from 'react-icons/fi'
 
 interface Reminder {
   id: string
@@ -121,54 +121,76 @@ export default function DailyReminderSection() {
 
   const activeCount = reminders.filter(r => r.active).length
 
+  // Compute a simple "next trigger" string for active reminders
+  const getNextTrigger = (r: Reminder): string => {
+    if (!r.active || r.days.length === 0) return ''
+    const dayNames: Record<string, string> = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' }
+    const nextDay = r.days[0]
+    return `${dayNames[nextDay] ?? nextDay} at ${r.time}`
+  }
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="px-6 py-4 border-b" style={{ borderColor: 'hsl(0 0% 85%)' }}>
+    <div className="flex flex-col h-full animate-fadeIn">
+      {/* Header */}
+      <div className="px-6 py-5 border-b" style={{ borderColor: 'hsl(0 0% 88%)' }}>
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-serif text-xl font-bold tracking-tight" style={{ letterSpacing: '-0.02em' }}>Daily Reminders</h2>
-            <p className="text-xs mt-0.5" style={{ color: 'hsl(0 0% 40%)' }}>Set study reminders to stay on track</p>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 flex items-center justify-center" style={{ background: 'hsl(0 0% 94%)' }}>
+              <FiBell className="h-4 w-4" style={{ color: 'hsl(0 0% 30%)' }} />
+            </div>
+            <div>
+              <h2 className="font-serif text-xl font-bold tracking-tight" style={{ letterSpacing: '-0.02em', color: 'hsl(0 0% 6%)' }}>Daily Reminders</h2>
+              <p className="text-xs mt-0.5" style={{ color: 'hsl(0 0% 45%)' }}>Set study reminders to stay on track</p>
+            </div>
           </div>
           {activeCount > 0 && (
-            <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1" style={{ borderRadius: '0' }}>
+            <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5" style={{ borderRadius: '0', background: 'hsl(142 71% 95%)', color: 'hsl(142 71% 30%)', border: '1px solid hsl(142 71% 85%)' }}>
               <FiBell className="h-3 w-3" />
-              <span className="text-xs font-medium">{activeCount} active</span>
+              <span className="text-xs font-semibold">{activeCount} active</span>
             </Badge>
           )}
         </div>
       </div>
 
-      {/* Notification banner */}
+      {/* Notification banner with slide-in */}
       {notifications.length > 0 && (
-        <div className="px-6 py-3" style={{ background: 'hsl(220 70% 95%)', borderBottom: '1px solid hsl(220 70% 85%)' }}>
-          <div className="flex items-center gap-2">
-            <FiBell className="h-4 w-4 flex-shrink-0" style={{ color: 'hsl(220 70% 45%)' }} />
-            <p className="text-sm font-medium" style={{ color: 'hsl(220 70% 30%)' }}>{notifications[0]}</p>
+        <div className="px-6 py-3.5 animate-fadeIn" style={{ background: 'hsl(220 70% 97%)', borderBottom: '2px solid hsl(220 70% 65%)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(220 70% 55%)' }}>
+              <FiBell className="h-4 w-4" style={{ color: 'white' }} />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: 'hsl(220 70% 45%)' }}>Reminder</p>
+              <p className="text-sm font-semibold" style={{ color: 'hsl(220 70% 25%)' }}>{notifications[0]}</p>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-6 space-y-6">
         {/* Quick presets */}
         {reminders.length === 0 && (
-          <div>
-            <h3 className="text-xs font-bold mb-3" style={{ color: 'hsl(0 0% 40%)', letterSpacing: '0.03em', textTransform: 'uppercase' }}>Quick Add Presets</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="animate-fadeIn">
+            <h3 className="text-[11px] font-bold mb-3 uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Quick Add Presets</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {presetReminders.map((preset, idx) => (
                 <button
                   key={idx}
                   onClick={() => addPreset(preset)}
-                  className="flex items-center gap-3 p-3 text-left transition-colors hover:bg-[hsl(0,0%,97%)]"
-                  style={{ border: '1px solid hsl(0 0% 85%)' }}
+                  className="group flex items-center gap-3 p-4 text-left transition-all duration-200 hover:shadow-sm"
+                  style={{ border: '1px solid hsl(0 0% 88%)', background: 'hsl(0 0% 100%)' }}
                 >
-                  <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(0 0% 94%)' }}>
-                    <FiClock className="h-4 w-4" style={{ color: 'hsl(0 0% 40%)' }} />
+                  <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 transition-colors duration-200 group-hover:bg-[hsl(0,0%,8%)]" style={{ background: 'hsl(0 0% 94%)' }}>
+                    <FiClock className="h-4 w-4 transition-colors duration-200 group-hover:text-white" style={{ color: 'hsl(0 0% 40%)' }} />
                   </div>
-                  <div>
-                    <p className="text-xs font-medium" style={{ letterSpacing: '-0.02em' }}>{preset.title}</p>
-                    <p className="text-[10px]" style={{ color: 'hsl(0 0% 50%)' }}>{preset.time} - {preset.days.join(', ')}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold" style={{ letterSpacing: '-0.02em', color: 'hsl(0 0% 8%)' }}>{preset.title}</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: 'hsl(0 0% 50%)' }}>{preset.desc}</p>
+                    <p className="text-[10px] mt-1 font-medium" style={{ color: 'hsl(0 0% 40%)' }}>{preset.time} -- {preset.days.join(', ')}</p>
                   </div>
-                  <FiPlus className="h-4 w-4 ml-auto flex-shrink-0" style={{ color: 'hsl(0 0% 60%)' }} />
+                  <div className="w-7 h-7 flex items-center justify-center flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ background: 'hsl(0 0% 92%)' }}>
+                    <FiPlus className="h-3.5 w-3.5" style={{ color: 'hsl(0 0% 30%)' }} />
+                  </div>
                 </button>
               ))}
             </div>
@@ -180,70 +202,83 @@ export default function DailyReminderSection() {
           <Button
             onClick={() => setShowForm(true)}
             variant="outline"
-            className="w-full h-10 text-sm"
-            style={{ borderRadius: '0', borderStyle: 'dashed' }}
+            className="w-full h-11 text-sm font-medium"
+            style={{ borderRadius: '0', borderStyle: 'dashed', borderColor: 'hsl(0 0% 80%)' }}
           >
             <FiPlus className="h-4 w-4 mr-2" /> Add Custom Reminder
           </Button>
         ) : (
-          <Card style={{ border: '1px solid hsl(0 0% 85%)', borderRadius: '0' }}>
-            <CardContent className="p-5">
-              <h3 className="font-serif text-sm font-bold mb-4" style={{ letterSpacing: '-0.02em' }}>New Reminder</h3>
-              <div className="space-y-3">
+          <Card className="animate-fadeIn" style={{ border: '1px solid hsl(0 0% 85%)', borderRadius: '0' }}>
+            <CardContent className="p-0">
+              <div className="px-5 py-4" style={{ borderBottom: '1px solid hsl(0 0% 92%)' }}>
+                <h3 className="font-serif text-sm font-bold" style={{ letterSpacing: '-0.02em', color: 'hsl(0 0% 6%)' }}>New Reminder</h3>
+                <p className="text-[10px] mt-0.5" style={{ color: 'hsl(0 0% 50%)' }}>Set a recurring study reminder</p>
+              </div>
+              <div className="px-5 py-5 space-y-4">
                 <div>
-                  <label className="text-xs font-medium mb-1 block" style={{ color: 'hsl(0 0% 40%)' }}>Reminder Title</label>
+                  <label className="text-[11px] font-semibold mb-1.5 block uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Title</label>
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Math Practice Session"
-                    className="text-sm h-10"
+                    className="text-sm h-11"
                     style={{ borderRadius: '0', borderColor: 'hsl(0 0% 85%)' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium mb-1 block" style={{ color: 'hsl(0 0% 40%)' }}>Description (optional)</label>
+                  <label className="text-[11px] font-semibold mb-1.5 block uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Description <span className="font-normal normal-case">(optional)</span></label>
                   <Input
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="What to focus on"
-                    className="text-sm h-10"
+                    className="text-sm h-11"
                     style={{ borderRadius: '0', borderColor: 'hsl(0 0% 85%)' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium mb-1 block" style={{ color: 'hsl(0 0% 40%)' }}>Time</label>
+                  <label className="text-[11px] font-semibold mb-1.5 block uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Time</label>
                   <Input
                     type="time"
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
-                    className="text-sm h-10"
+                    className="text-sm h-11 w-36"
                     style={{ borderRadius: '0', borderColor: 'hsl(0 0% 85%)' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium mb-2 block" style={{ color: 'hsl(0 0% 40%)' }}>Repeat on</label>
+                  <label className="text-[11px] font-semibold mb-2 block uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Repeat On</label>
                   <div className="flex gap-1.5">
-                    {ALL_DAYS.map(day => (
-                      <button
-                        key={day}
-                        onClick={() => toggleDay(day)}
-                        className="w-10 h-10 text-xs font-medium transition-colors"
-                        style={{
-                          background: selectedDays.includes(day) ? 'hsl(0 0% 8%)' : 'hsl(0 0% 94%)',
-                          color: selectedDays.includes(day) ? 'hsl(0 0% 98%)' : 'hsl(0 0% 40%)',
-                          border: `1px solid ${selectedDays.includes(day) ? 'hsl(0 0% 8%)' : 'hsl(0 0% 80%)'}`,
-                        }}
-                      >
-                        {day}
-                      </button>
-                    ))}
+                    {ALL_DAYS.map(day => {
+                      const isSelected = selectedDays.includes(day)
+                      return (
+                        <button
+                          key={day}
+                          onClick={() => toggleDay(day)}
+                          className="w-11 h-11 text-xs font-semibold transition-all duration-200 relative"
+                          style={{
+                            background: isSelected ? 'hsl(0 0% 8%)' : 'hsl(0 0% 100%)',
+                            color: isSelected ? 'hsl(0 0% 98%)' : 'hsl(0 0% 45%)',
+                            border: `1.5px solid ${isSelected ? 'hsl(0 0% 8%)' : 'hsl(0 0% 82%)'}`,
+                            boxShadow: isSelected ? '0 2px 6px rgba(0,0,0,0.15)' : 'none',
+                          }}
+                        >
+                          {day}
+                          {isSelected && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 flex items-center justify-center" style={{ background: 'hsl(142 71% 45%)' }}>
+                              <FiCheck className="h-2 w-2" style={{ color: 'white' }} />
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
+                  <p className="text-[10px] mt-1.5" style={{ color: 'hsl(0 0% 55%)' }}>{selectedDays.length} day{selectedDays.length !== 1 ? 's' : ''} selected</p>
                 </div>
-                <div className="flex gap-2 pt-1">
+                <div className="flex gap-2 pt-2">
                   <Button
                     onClick={addReminder}
                     disabled={!title.trim() || selectedDays.length === 0}
-                    className="flex-1 h-10"
+                    className="flex-1 h-11 font-semibold"
                     style={{ borderRadius: '0', background: 'hsl(0 0% 8%)', color: 'hsl(0 0% 98%)' }}
                   >
                     <FiCheck className="h-4 w-4 mr-2" /> Save Reminder
@@ -251,7 +286,7 @@ export default function DailyReminderSection() {
                   <Button
                     variant="outline"
                     onClick={() => { setShowForm(false); setTitle(''); setDescription('') }}
-                    className="h-10"
+                    className="h-11 px-5"
                     style={{ borderRadius: '0' }}
                   >
                     Cancel
@@ -262,78 +297,99 @@ export default function DailyReminderSection() {
           </Card>
         )}
 
-        {/* Reminders list */}
+        {/* Empty state */}
         {reminders.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-14 h-14 flex items-center justify-center mb-4" style={{ background: 'hsl(0 0% 94%)' }}>
-              <FiBell className="h-7 w-7" style={{ color: 'hsl(0 0% 40%)' }} />
+          <div className="flex flex-col items-center justify-center py-14 text-center animate-fadeIn">
+            <div className="relative mb-5">
+              <div className="w-16 h-16 flex items-center justify-center" style={{ background: 'hsl(0 0% 95%)' }}>
+                <FiBell className="h-7 w-7" style={{ color: 'hsl(0 0% 45%)' }} />
+              </div>
+              <div className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center" style={{ background: 'hsl(0 0% 8%)' }}>
+                <FiPlus className="h-3 w-3" style={{ color: 'white' }} />
+              </div>
             </div>
-            <h3 className="font-serif text-base font-bold mb-1" style={{ letterSpacing: '-0.02em' }}>No reminders set</h3>
-            <p className="text-sm" style={{ color: 'hsl(0 0% 40%)' }}>Use the presets above or create a custom reminder.</p>
+            <h3 className="font-serif text-lg font-bold mb-1.5" style={{ letterSpacing: '-0.02em', color: 'hsl(0 0% 6%)' }}>No reminders set</h3>
+            <p className="text-sm max-w-xs" style={{ color: 'hsl(0 0% 45%)', lineHeight: '1.6' }}>Use the presets above or create a custom reminder to stay on track.</p>
           </div>
         )}
 
+        {/* Reminders list */}
         {reminders.length > 0 && (
-          <div>
-            <h3 className="text-xs font-bold mb-3" style={{ color: 'hsl(0 0% 40%)', letterSpacing: '0.03em', textTransform: 'uppercase' }}>Your Reminders</h3>
-            <div className="space-y-2">
-              {reminders.map(r => (
-                <div
-                  key={r.id}
-                  className="flex items-center gap-3 p-3 transition-colors"
-                  style={{
-                    border: '1px solid hsl(0 0% 85%)',
-                    background: r.active ? 'hsl(0 0% 100%)' : 'hsl(0 0% 96%)',
-                    opacity: r.active ? 1 : 0.6,
-                  }}
-                >
-                  <button
-                    onClick={() => toggleReminder(r.id)}
-                    className="w-9 h-9 flex items-center justify-center flex-shrink-0 transition-colors"
+          <div className="animate-fadeIn">
+            <h3 className="text-[11px] font-bold mb-3 uppercase tracking-wide" style={{ color: 'hsl(0 0% 35%)' }}>Your Reminders</h3>
+            <div className="space-y-2.5">
+              {reminders.map(r => {
+                const nextTrigger = getNextTrigger(r)
+                return (
+                  <div
+                    key={r.id}
+                    className="flex items-stretch transition-all duration-200 hover:shadow-sm"
                     style={{
-                      background: r.active ? 'hsl(142 71% 45%)' : 'hsl(0 0% 85%)',
-                      border: `1px solid ${r.active ? 'hsl(142 71% 35%)' : 'hsl(0 0% 75%)'}`,
+                      border: '1px solid hsl(0 0% 88%)',
+                      background: r.active ? 'hsl(0 0% 100%)' : 'hsl(0 0% 97%)',
                     }}
-                    title={r.active ? 'Deactivate' : 'Activate'}
                   >
-                    {r.active ? (
-                      <FiBell className="h-4 w-4" style={{ color: 'white' }} />
-                    ) : (
-                      <FiBell className="h-4 w-4" style={{ color: 'hsl(0 0% 50%)' }} />
-                    )}
-                  </button>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium" style={{ letterSpacing: '-0.02em', color: 'hsl(0 0% 8%)' }}>{r.title}</p>
-                    {r.description && (
-                      <p className="text-[10px]" style={{ color: 'hsl(0 0% 50%)' }}>{r.description}</p>
-                    )}
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] flex items-center gap-1" style={{ color: 'hsl(0 0% 40%)' }}>
-                        <FiClock className="h-2.5 w-2.5" /> {r.time}
-                      </span>
-                      <span className="text-[10px]" style={{ color: 'hsl(0 0% 55%)' }}>{r.days.join(', ')}</span>
+                    {/* Left color strip */}
+                    <div className="w-1 flex-shrink-0" style={{ background: r.active ? 'hsl(142 71% 45%)' : 'hsl(0 0% 78%)' }} />
+
+                    <div className="flex items-center gap-3 px-4 py-3.5 flex-1 min-w-0">
+                      {/* Toggle button */}
+                      <button
+                        onClick={() => toggleReminder(r.id)}
+                        className="w-9 h-9 flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                        style={{
+                          background: r.active ? 'hsl(142 71% 45%)' : 'hsl(0 0% 92%)',
+                          border: `1.5px solid ${r.active ? 'hsl(142 71% 35%)' : 'hsl(0 0% 80%)'}`,
+                          boxShadow: r.active ? '0 1px 4px rgba(34,197,94,0.25)' : 'none',
+                        }}
+                        title={r.active ? 'Deactivate' : 'Activate'}
+                      >
+                        {r.active ? (
+                          <FiBell className="h-4 w-4" style={{ color: 'white' }} />
+                        ) : (
+                          <FiBell className="h-4 w-4" style={{ color: 'hsl(0 0% 55%)' }} />
+                        )}
+                      </button>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold" style={{ letterSpacing: '-0.02em', color: r.active ? 'hsl(0 0% 8%)' : 'hsl(0 0% 45%)' }}>{r.title}</p>
+                        {r.description && (
+                          <p className="text-[10px] mt-0.5" style={{ color: 'hsl(0 0% 50%)' }}>{r.description}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-[10px] flex items-center gap-1 font-medium" style={{ color: 'hsl(0 0% 40%)' }}>
+                            <FiClock className="h-2.5 w-2.5" /> {r.time}
+                          </span>
+                          <span className="w-0.5 h-0.5" style={{ background: 'hsl(0 0% 60%)', borderRadius: '50%' }} />
+                          <span className="text-[10px]" style={{ color: 'hsl(0 0% 55%)' }}>{r.days.join(', ')}</span>
+                        </div>
+                        {r.active && nextTrigger && (
+                          <p className="text-[10px] mt-1 font-medium" style={{ color: 'hsl(220 70% 50%)' }}>Next: {nextTrigger}</p>
+                        )}
+                      </div>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteReminder(r.id)}
+                        className="h-8 w-8 p-0 flex-shrink-0 opacity-30 hover:opacity-100 transition-opacity"
+                        style={{ borderRadius: '0' }}
+                      >
+                        <FiTrash2 className="h-3.5 w-3.5" style={{ color: 'hsl(0 84% 55%)' }} />
+                      </Button>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteReminder(r.id)}
-                    className="h-8 w-8 p-0 flex-shrink-0"
-                    style={{ borderRadius: '0' }}
-                  >
-                    <FiTrash2 className="h-4 w-4" style={{ color: 'hsl(0 84% 60%)' }} />
-                  </Button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
 
-        {/* Tip */}
+        {/* Tip - subtle embedded */}
         {reminders.length > 0 && (
-          <div className="flex items-start gap-2 px-3 py-2" style={{ background: 'hsl(45 93% 95%)', border: '1px solid hsl(45 93% 80%)' }}>
-            <FiAlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'hsl(45 93% 40%)' }} />
-            <p className="text-[11px]" style={{ color: 'hsl(45 50% 30%)', lineHeight: '1.6' }}>
+          <div className="flex items-start gap-3 px-4 py-3" style={{ background: 'hsl(0 0% 97%)', borderLeft: '2px solid hsl(0 0% 80%)' }}>
+            <FiInfo className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" style={{ color: 'hsl(0 0% 50%)' }} />
+            <p className="text-[11px]" style={{ color: 'hsl(0 0% 45%)', lineHeight: '1.6' }}>
               Reminders work while you have this page open. Keep it open in a tab for notifications to appear at the scheduled time.
             </p>
           </div>
